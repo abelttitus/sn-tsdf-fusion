@@ -37,6 +37,7 @@ if __name__ == "__main__":
         depth_file=contents[1]
     except:
         print "Associate File read error at i =",i
+        continue
 
     depth_im = cv2.imread(depth_file,-1).astype(float)
     depth_im /= 1000.  # depth is saved in 16-bit PNG in millimeters
@@ -44,12 +45,12 @@ if __name__ == "__main__":
     #depth_im[depth_im == 65.535] = 0  # set invalid depth to 0 (specific to 7-scenes dataset)
     #cam_pose = np.loadtxt("data/frame-%06d.pose.txt"%(i))  # 4x4 rigid transformation matrix
     cam_pose=cam_poses[4*i:4*(i+1),:]
-    print "Cam Pose shape",cam_pose.shape
+    #print "Cam Pose shape",cam_pose.shape
     
     #print "Concatenated Cam pose",cam_pose
     # Compute camera view frustum and extend convex hull
     view_frust_pts = fusion.get_view_frustum(depth_im, cam_intr, cam_pose)
-    print "View Frust points shape",view_frust_pts.shape
+    #print "View Frust points shape",view_frust_pts.shape
     vol_bnds[:,0] = np.minimum(vol_bnds[:,0], np.amin(view_frust_pts, axis=1))
     vol_bnds[:,1] = np.maximum(vol_bnds[:,1], np.amax(view_frust_pts, axis=1))
     i+=1
