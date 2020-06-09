@@ -22,6 +22,8 @@ if __name__ == "__main__":
   cam_poses=np.loadtxt("data/camera-poses.txt")
   print "Cam poses shape".cam_poses.shape
   
+  print "Cam Pose shape",cam_poses.shape
+  
   file=open("data/associate.txt")
   data = file.read()
   lines = data.split("\n") 
@@ -35,8 +37,23 @@ if __name__ == "__main__":
     depth_file=contents[1]
     # Read depth image and camera pose
     depth_im = cv2.imread(depth_file,-1).astype(float)
-    depth_im /= 1000.  # depth is saved in 16-bit PNG in millimeters
+    #depth_im /= 1000.  # depth is saved in 16-bit PNG in millimeters
     print "Shape of depth image:",depth_im.shape
+    print "Depth Max",np.max(depth_im)
+    print "Depth Min",np.min(depth_im)
+    cv2.imshow("Depth",depth_im)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+    
+    rgb_im = cv2.imread(rgb_file,-1)
+    #depth_im /= 1000.  # depth is saved in 16-bit PNG in millimeters
+    print "Shape of rgb image:",rgb_im.shape
+    print "rgb Max",np.max(rgb_im)
+    print "rgb Min",np.min(rgb_im)
+    cv2.imshow("RGB",rgb_im)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+    
     #depth_im[depth_im == 65.535] = 0  # set invalid depth to 0 (specific to 7-scenes dataset)
     #cam_pose = np.loadtxt("data/frame-%06d.pose.txt"%(i))  # 4x4 rigid transformation matrix
     cam_pose=cam_poses[4*i:4*(i+1),:]
@@ -46,6 +63,7 @@ if __name__ == "__main__":
     vol_bnds[:,0] = np.minimum(vol_bnds[:,0], np.amin(view_frust_pts, axis=1))
     vol_bnds[:,1] = np.maximum(vol_bnds[:,1], np.amax(view_frust_pts, axis=1))
     i+=1
+    break
     
   print "Volume Bounds:",vol_bnds
   # ======================================================================================================== #
