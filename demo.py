@@ -20,7 +20,7 @@ if __name__ == "__main__":
   cam_intr = np.loadtxt("data/camera-intrinsics.txt", delimiter=' ')
   print "Camera Intrinsics",cam_intr
   cam_poses=np.loadtxt("data/camera-poses.txt")
-  print "Cam poses shape".cam_poses.shape
+  print "Cam poses shape",cam_poses.shape
 
   
   file=open("data/associate.txt")
