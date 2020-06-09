@@ -32,8 +32,11 @@ if __name__ == "__main__":
   i=0
   for line in lines:     #This is used to loop all images
     contents=line.split(" ")
-    rgb_file=contents[0]
-    depth_file=contents[1]
+    try:
+        rgb_file=contents[0]
+        depth_file=contents[1]
+    except:
+        print "Associate File read error at i =",i
 
     depth_im = cv2.imread(depth_file,-1).astype(float)
     depth_im /= 1000.  # depth is saved in 16-bit PNG in millimeters
