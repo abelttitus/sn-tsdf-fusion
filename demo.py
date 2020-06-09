@@ -58,7 +58,8 @@ if __name__ == "__main__":
   file.close()  
   print "Volume Bounds:",vol_bnds
 
-
+  print("Initializing voxel volume...")
+  tsdf_vol = fusion.TSDFVolume(vol_bnds, voxel_size=0.02)
   # Loop through RGB-D images and fuse them together
   t0_elapse = time.time()
 
@@ -71,8 +72,12 @@ if __name__ == "__main__":
     contents=line.split(" ")
     print("Fusing frame %d/%d"%(i+1, n_imgs))
 
-    rgb_file=contents[0]
-    depth_file=contents[1]
+    try:
+        rgb_file=contents[0]
+        depth_file=contents[1]
+    except:
+        print "Associate File read error at i =",i
+        continue
     cam_pose=cam_poses[4*i:4*(i+1),:]
     # Read RGB-D image and camera pose
     color_image = cv2.cvtColor(cv2.imread(rgb_file), cv2.COLOR_BGR2RGB)
