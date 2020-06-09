@@ -8,7 +8,6 @@ Created on Tue Jun  9 19:37:55 2020
 
 
 import numpy as np
-import cv2
 from PIL import Image
 
 fx = 2.771281292110203935e+02  # focal length x
