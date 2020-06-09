@@ -35,6 +35,8 @@ if __name__ == "__main__":
     rgb_file=contents[0]
     depth_file=contents[1]
     # Read depth image and camera pose
+    print depth_file
+    print rgb_file
     depth_im = cv2.imread(depth_file,-1).astype(float)
     #depth_im /= 1000.  # depth is saved in 16-bit PNG in millimeters
     print "Shape of depth image:",depth_im.shape
