@@ -79,4 +79,4 @@ if __name__=='__main__':
     depth_path=contents[1]
 
     
-    generate_pointcloud(img_path,depth_path,'/home/ashfaquekp/sn-tsdf-fusion-python/pcd_sn10.ply')
+    generate_pointcloud(img_path,depth_path,'/home/ashfaquekp/sn-tsdf-fusion/pcd_sn10.ply')
