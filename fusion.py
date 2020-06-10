@@ -1,6 +1,7 @@
 # Copyright (c) 2018 Andy Zeng
 
 import numpy as np
+import math
 
 from numba import njit, prange
 from skimage import measure
@@ -65,6 +66,7 @@ class TSDFVolume:
 
       # Cuda kernel function (C++)
       self._cuda_src_mod = SourceModule("""
+        #include <math.h>
         __global__ void integrate(float * tsdf_vol,
                                   float * weight_vol,
                                   float * color_vol,
@@ -102,8 +104,20 @@ class TSDFVolume:
           float cam_pt_y = cam_pose[0*4+1]*tmp_pt_x+cam_pose[1*4+1]*tmp_pt_y+cam_pose[2*4+1]*tmp_pt_z;
           float cam_pt_z = cam_pose[0*4+2]*tmp_pt_x+cam_pose[1*4+2]*tmp_pt_y+cam_pose[2*4+2]*tmp_pt_z;
           // Camera coordinates to image pixels
-          int pixel_x = (int) roundf(cam_intr[0*3+0]*(cam_pt_x/cam_pt_z)+cam_intr[0*3+2]);
-          int pixel_y = (int) roundf(cam_intr[1*3+1]*(cam_pt_y/cam_pt_z)+cam_intr[1*3+2]);
+          
+          if(camp_pt_z==0)
+             return;
+          float x_ray_to_image=cam_pt_x/cam_pt_z;
+          float y_ray_to_image=cam_pt_y/cam_pt_z;
+          float tanh=0.57735;
+          float tanv=0.41421;
+          float pixel_width=320;
+          float pixel_height=240;
+          
+          
+          int pixel_x=(int) roundf(((x_ray_to_image/tanh)+1)*(pixel_width/2)-0.5);
+          int pixel_y=(int) roundf(((y_ray_to_image/tanv)+1)*(pixel_height/2)-0.5);
+         
           // Skip if outside view frustum
           int im_h = (int) other_params[2];
           int im_w = (int) other_params[3];
@@ -115,7 +129,11 @@ class TSDFVolume:
               return;
           // Integrate TSDF
           float trunc_margin = other_params[4];
-          float depth_diff = depth_value-cam_pt_z;
+          
+          float norm = sqrt(x_ray_to_image*x_ray_to_image+y_ray_to_image*y_ray_to_image+1.0);
+          float Z = depth_value/norm;
+          float depth_diff = Z-cam_pt_z;
+          
           if (depth_diff < -trunc_margin)
               return;
           float dist = fmin(1.0f,depth_diff/trunc_margin);
@@ -346,7 +364,50 @@ def rigid_transform(xyz, transform):
   xyz_t_h = np.dot(transform, xyz_h.T).T
   return xyz_t_h[:, :3]
 
+#=================================================================================
+def normalize(v):
+  return v/np.linalg.norm(v)
 
+def pixel_to_ray(pixel,vfov=45,hfov=60,pixel_width=320,pixel_height=240):
+    x, y = pixel
+    x_vect = math.tan(math.radians(hfov/2.0)) * ((2.0 * ((x+0.5)/pixel_width)) - 1.0)
+    y_vect = math.tan(math.radians(vfov/2.0)) * ((2.0 * ((y+0.5)/pixel_height)) - 1.0)
+    return (x_vect,y_vect,1.0)
+
+def normalised_pixel_to_ray_array(width=320,height=240):
+    pixel_to_ray_array = np.zeros((height,width,3))
+    for y in range(height):
+        for x in range(width):
+            pixel_to_ray_array[y,x] = normalize(np.array(pixel_to_ray((x,y),pixel_height=height,pixel_width=width)))
+    return pixel_to_ray_array
+
+def points_in_camera_coords(depth_map,pixel_to_ray_array):
+    assert depth_map.shape[0] == pixel_to_ray_array.shape[0]
+    assert depth_map.shape[1] == pixel_to_ray_array.shape[1]
+    assert len(depth_map.shape) == 2
+    assert pixel_to_ray_array.shape[2] == 3
+    camera_relative_xyz = np.ones((depth_map.shape[0],depth_map.shape[1],4))
+    for i in range(3):
+        camera_relative_xyz[:,:,i] = depth_map * pixel_to_ray_array[:,:,i]
+    return camera_relative_xyz
+
+def get_vol_bnds(depth_im,cam_pose):
+    cached_pixel_to_ray_array = normalised_pixel_to_ray_array()
+    points_in_camera = points_in_camera_coords(depth_im,cached_pixel_to_ray_array)
+    vol_bnds=np.ones((3,2))
+    vol_bnds[0,0]=np.min(points_in_camera[:,:,0])
+    vol_bnds[1,0]=np.min(points_in_camera[:,:,1])
+    vol_bnds[2,0]=np.min(points_in_camera[:,:,2])
+    
+    vol_bnds[0,1]=np.max(points_in_camera[:,:,0])
+    vol_bnds[1,1]=np.max(points_in_camera[:,:,1])
+    vol_bnds[2,1]=np.max(points_in_camera[:,:,2])
+    
+    vol_bnds_world = rigid_transform(vol_bnds.T, cam_pose).T
+    return vol_bnds_world
+
+#=======================================================================================   
+    
 def get_view_frustum(depth_im, cam_intr, cam_pose):
   """Get corners of 3D camera view frustum of depth image
   """

@@ -71,8 +71,8 @@ if __name__=='__main__':
         for line in file:
             contents=line.split()
             if verbose:
-                print("File (Depth):",contents[0])
-                print("File (RGB)",contents[1])
+                print("File (RGB):",contents[0])
+                print("File (Depth)",contents[1])
             break
 
     img_path=contents[0]
