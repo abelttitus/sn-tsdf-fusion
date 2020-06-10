@@ -130,9 +130,9 @@ class TSDFVolume:
           // Integrate TSDF
           float trunc_margin = other_params[4];
           
-          float norm = sqrt(x_ray_to_image*x_ray_to_image+y_ray_to_image*y_ray_to_image+1.0);
-          float Z = depth_value/norm;
-          float depth_diff = Z-cam_pt_z;
+         // float norm = sqrt(x_ray_to_image*x_ray_to_image+y_ray_to_image*y_ray_to_image+1.0);
+          //float Z = depth_value/norm;
+          float depth_diff = depth_value-cam_pt_z;
           
           if (depth_diff < -trunc_margin)
               return;
