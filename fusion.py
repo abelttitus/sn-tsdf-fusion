@@ -105,7 +105,7 @@ class TSDFVolume:
           float cam_pt_z = cam_pose[0*4+2]*tmp_pt_x+cam_pose[1*4+2]*tmp_pt_y+cam_pose[2*4+2]*tmp_pt_z;
           // Camera coordinates to image pixels
           
-          if(camp_pt_z==0)
+          if(cam_pt_z==0)
              return;
           float x_ray_to_image=cam_pt_x/cam_pt_z;
           float y_ray_to_image=cam_pt_y/cam_pt_z;
