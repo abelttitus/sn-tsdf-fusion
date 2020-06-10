@@ -26,38 +26,40 @@ if __name__ == "__main__":
   # ======================================================================================================== #
   print("Estimating voxel volume bounds...")
   n_imgs = 300
-  vol_bnds = np.zeros((3,2))
+  vol_bnds = np.array( [[-0.02348084,4.73584131],
+ [ 0. ,2.70015462],
+ [-3.38044459,1.0898702 ]]
+)
   
+  cam_intr = np.loadtxt("data/camera-intrinsics.txt", delimiter=' ')
   cam_poses=np.loadtxt("data/camera-poses.txt")
-  file=open("data/associate.txt")
-  data = file.read()
-  lines = data.split("\n") 
+  # file=open("data/associate.txt")
+  # data = file.read()
+  # lines = data.split("\n") 
   
-  i=0
+  # i=0
   
-  for line in lines:                                     #This is used to loop all images
-    contents=line.split(" ")
-    try:
-        depth_file=contents[1]
-    except:
-        print "Associate File read error at i =",i
-        continue
+  # for line in lines:                                     #This is used to loop all images
+  #   contents=line.split(" ")
+  #   try:
+  #       depth_file=contents[1]
+  #   except:
+  #       print "Associate File read error at i =",i
+  #       continue
     
-    # Read depth image and camera pose
-    depth_im = cv2.imread(depth_file,-1).astype(float)
-    depth_im /= 1000.  # depth is saved in 16-bit PNG in millimeters
-    cam_pose=cam_poses[4*i:4*(i+1),:]
+  #   # Read depth image and camera pose
+  #   depth_im = cv2.imread(depth_file,-1).astype(float)
+  #   depth_im /= 1000.  # depth is saved in 16-bit PNG in millimeters
+  #   cam_pose=cam_poses[4*i:4*(i+1),:]
 
-    # Compute camera view frustum and extend convex hull
-    vol_bnds_temp=fusion.get_vol_bnds(depth_im,cam_pose)
-    vol_bnds[:,0] = np.minimum(vol_bnds[:,0], vol_bnds_temp[:,0])
-    vol_bnds[:,1] = np.maximum(vol_bnds[:,1], vol_bnds_temp[:,1])
-    i+=1
-  file.close()
+  #   # Compute camera view frustum and extend convex hull
+  #   vol_bnds_temp=fusion.get_vol_bnds(depth_im,cam_pose)
+  #   vol_bnds[:,0] = np.minimum(vol_bnds[:,0], vol_bnds_temp[:,0])
+  #   vol_bnds[:,1] = np.maximum(vol_bnds[:,1], vol_bnds_temp[:,1])
+  #   i+=1
+  # file.close()
   
-  print "********************"
-  print "Volume Bounds",vol_bnds
-  print "*******************"
+
   # ======================================================================================================== #
 
   # ======================================================================================================== #
