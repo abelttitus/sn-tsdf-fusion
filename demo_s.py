@@ -67,7 +67,7 @@ if __name__ == "__main__":
   # Loop through RGB-D images and fuse them together
   t0_elapse = time.time()
   
-  class_id=67
+  class_id=40
   depth_dir='/home/ashfaquekp/val/0/10/depth/'
   mask_dir='/home/ashfaquekp/val/0/10/mrcnn_mask/'
   file=open("/home/ashfaquekp/val/0/10/mrcnn_mask/class_"+str(class_id)+".txt")
