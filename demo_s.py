@@ -79,33 +79,33 @@ if __name__ == "__main__":
   for line in lines:                                     #This is used to loop all images
     contents=line.split(" ")
     try:
-        rgb_file=contents[0]
+        rgb_file=contents[0] 
+        img_no=rgb_file.split(".")[0].split("/")[-1]
+        depth_file=depth_dir+str(img_no)+'.png'
+        instance_mask_file=mask_dir+str(img_no)+'_'+str(class_id)+'.jpg'
+        print("Fusing frame %d"%(i+1))
+    
+        # Read RGB-D image and camera pose
+        color_image = cv2.cvtColor(cv2.imread(rgb_file), cv2.COLOR_BGR2RGB)
+        depth_im = cv2.imread(depth_file,-1).astype(float)
+        depth_im /= 1000.
+        cam_pose=cam_poses[4*i:4*(i+1),:]
+    
+        mask=cv2.imread(instance_mask_file)
+        mask=mask.astype('float')
+        mask[mask<125]=0.0
+        mask[mask>=125]=1.0
+        
+        color_image=color_image*mask
+        color_image=color_image.astype('int')
+        
+        depth_im=depth_im*mask[:,:,0]
+        
+        # Integrate observation into voxel volume (assume color aligned with depth)
+        tsdf_vol.integrate(color_image, depth_im, cam_intr, cam_pose, obs_weight=1.)
     except:
         print "Associate File read error at i =",i
         continue
-    img_no=rgb_file.split(".")[0].split("/")[-1]
-    depth_file=depth_dir+str(img_no)+'.png'
-    instance_mask_file=mask_dir+str(img_no)+'_'+str(class_id)+'.jpg'
-    print("Fusing frame %d"%(i+1))
-
-    # Read RGB-D image and camera pose
-    color_image = cv2.cvtColor(cv2.imread(rgb_file), cv2.COLOR_BGR2RGB)
-    depth_im = cv2.imread(depth_file,-1).astype(float)
-    depth_im /= 1000.
-    cam_pose=cam_poses[4*i:4*(i+1),:]
-
-    mask=cv2.imread(instance_mask_file)
-    mask=mask.astype('float')
-    mask[mask<125]=0.0
-    mask[mask>=125]=1.0
-    
-    color_image=color_image*mask
-    color_image=color_image.astype('int')
-    
-    depth_im=depth_im*mask[:,:,0]
-    
-    # Integrate observation into voxel volume (assume color aligned with depth)
-    tsdf_vol.integrate(color_image, depth_im, cam_intr, cam_pose, obs_weight=1.)
     i+=1
 
   fps = n_imgs / (time.time() - t0_elapse)
