@@ -86,7 +86,7 @@ if __name__ == "__main__":
     img_no=rgb_file.split(".")[0].split("/")[-1]
     depth_file=depth_dir+str(img_no)+'.png'
     instance_mask_file=mask_dir+str(img_no)+'_'+str(class_id)+'.jpg'
-    print("Fusing frame %d/%d"%(i+1))
+    print("Fusing frame %d"%(i+1))
 
     # Read RGB-D image and camera pose
     color_image = cv2.cvtColor(cv2.imread(rgb_file), cv2.COLOR_BGR2RGB)
