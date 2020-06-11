@@ -84,12 +84,13 @@ if __name__ == "__main__":
         depth_file=depth_dir+str(img_no)+'.png'
         instance_mask_file=mask_dir+str(img_no)+'_'+str(class_id)+'.jpg'
         print("Fusing frame %d"%(i+1))
-    
+        
+        pose_index=int(int(img_no)/25)
         # Read RGB-D image and camera pose
         color_image = cv2.cvtColor(cv2.imread(rgb_file), cv2.COLOR_BGR2RGB)
         depth_im = cv2.imread(depth_file,-1).astype(float)
         depth_im /= 1000.
-        cam_pose=cam_poses[4*i:4*(i+1),:]
+        cam_pose=cam_poses[4*pose_index:4*(pose_index+1),:]
     
         mask=cv2.imread(instance_mask_file)
         mask=mask.astype('float')
