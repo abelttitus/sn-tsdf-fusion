@@ -62,7 +62,7 @@ if __name__ == "__main__":
   # ======================================================================================================== #
   # Initialize voxel volume
   print("Initializing voxel volume...")
-  tsdf_vol = fusion.TSDFVolume(vol_bnds, voxel_size=0.02)
+  tsdf_vol = fusion.TSDFVolume(vol_bnds, voxel_size=0.001)
 
   # Loop through RGB-D images and fuse them together
   t0_elapse = time.time()
@@ -115,9 +115,9 @@ if __name__ == "__main__":
   # Get mesh from voxel volume and save to disk (can be viewed with Meshlab)
   print("Saving mesh to mesh.ply...")
   verts, faces, norms, colors = tsdf_vol.get_mesh()
-  fusion.meshwrite("mesh-key.ply", verts, faces, norms, colors)
+  fusion.meshwrite("mesh-bottle-0.005.ply", verts, faces, norms, colors)
 
   # Get point cloud from voxel volume and save to disk (can be viewed with Meshlab)
-  print("Saving point cloud to pc.ply...")
-  point_cloud = tsdf_vol.get_point_cloud()
-  fusion.pcwrite("pc-key.ply", point_cloud)
+  # print("Saving point cloud to pc.ply...")
+  # point_cloud = tsdf_vol.get_point_cloud()
+  # fusion.pcwrite("pc-key.ply", point_cloud)
