@@ -41,30 +41,31 @@ if __name__ == "__main__":
     contents=line.split(" ")
     try:
       rgb_file=contents[0]
-      img_no=rgb_file.split(".")[0].split("/")[-1]
-      depth_file=depth_dir+str(img_no)+'.png'
-      instance_mask_file=mask_dir+str(img_no)+'_'+str(class_id)+'.jpg'
-      
-      depth_im = cv2.imread(depth_file,-1).astype(float)
-      depth_im /= 1000.  # depth is saved in 16-bit PNG in millimeters
-      
-      mask=cv2.imread(instance_mask_file)
-      mask=mask.astype('float')
-      mask[mask<125]=0.0
-      mask[mask>=125]=1.0
-      
-      depth_im=depth_im*mask[:,:,0]
-        
-      pose_index=int(int(img_no)/25)
-      cam_pose=cam_poses[4*pose_index:4*(pose_index+1),:]
-
-  # Compute camera view frustum and extend convex hull
-      vol_bnds_temp=fusion.get_vol_bnds_obj(depth_im,cam_pose)
-      vol_bnds[:,0] = np.minimum(vol_bnds[:,0], vol_bnds_temp[:,0])
-      vol_bnds[:,1] = np.maximum(vol_bnds[:,1], vol_bnds_temp[:,1])
     except:
       print "Associate File read error at i =",i
       continue
+    img_no=rgb_file.split(".")[0].split("/")[-1]
+    depth_file=depth_dir+str(img_no)+'.png'
+    instance_mask_file=mask_dir+str(img_no)+'_'+str(class_id)+'.jpg'
+    
+    depth_im = cv2.imread(depth_file,-1).astype(float)
+    depth_im /= 1000.  # depth is saved in 16-bit PNG in millimeters
+    
+    mask=cv2.imread(instance_mask_file)
+    mask=mask.astype('float')
+    mask[mask<125]=0.0
+    mask[mask>=125]=1.0
+    
+    depth_im=depth_im*mask[:,:,0]
+      
+    pose_index=int(int(img_no)/25)
+    cam_pose=cam_poses[4*pose_index:4*(pose_index+1),:]
+  
+# Compute camera view frustum and extend convex hull
+    vol_bnds_temp=fusion.get_vol_bnds_obj(depth_im,cam_pose)
+    vol_bnds[:,0] = np.minimum(vol_bnds[:,0], vol_bnds_temp[:,0])
+    vol_bnds[:,1] = np.maximum(vol_bnds[:,1], vol_bnds_temp[:,1])
+
     i+=1
 
     
