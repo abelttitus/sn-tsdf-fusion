@@ -80,7 +80,7 @@ if __name__ == "__main__":
   # ======================================================================================================== #
   # Initialize voxel volume
   print("Initializing voxel volume...")
-  tsdf_vol = fusions.TSDFVolume(vol_bnds, voxel_size=0.001)
+  tsdf_vol = fusions.TSDFVolume(vol_bnds, voxel_size=0.004)
 
   # Loop through RGB-D images and fuse them together
   t0_elapse = time.time()
