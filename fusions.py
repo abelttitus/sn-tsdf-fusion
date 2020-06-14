@@ -423,17 +423,17 @@ def get_vol_bnds_obj(depth_im,cam_pose):
     y_coords=np.reshape(points_in_camera[:,:,1],-1)
     z_coords=np.reshape(points_in_camera[:,:,2],-1)
     
-    x_width=1.5(np.percentile(x_coords,90)-np.percentile(x_coords,10))
+    x_width=1.5*(np.percentile(x_coords,90)-np.percentile(x_coords,10))
     x_center=np.percentile(x_coords,50)
     vol_bnds[0,0]=x_center-(x_width/2.)  
     vol_bnds[0,1]=x_center+(x_width/2.)
     
-    y_width=1.5(np.percentile(y_coords,90)-np.percentile(y_coords,10))
+    y_width=1.5*(np.percentile(y_coords,90)-np.percentile(y_coords,10))
     y_center=np.percentile(y_coords,50)
     vol_bnds[1,0]=y_center-(y_width/2.)  
     vol_bnds[1,1]=y_center+(y_width/2.)
  
-    z_width=1.5(np.percentile(z_coords,90)-np.percentile(z_coords,10))
+    z_width=1.5*(np.percentile(z_coords,90)-np.percentile(z_coords,10))
     z_center=np.percentile(z_coords,50)
     vol_bnds[2,0]=z_center-(z_width/2.)  
     vol_bnds[2,1]=z_center+(z_width/2.)
