@@ -28,7 +28,7 @@ if __name__ == "__main__":
   
   cam_intr = np.loadtxt("data/camera-intrinsics.txt", delimiter=' ')
   cam_poses=np.loadtxt("data/camera-poses.txt")
-  class_id=40
+  class_id=67
   depth_dir='/home/ashfaquekp/val/0/10/depth/'
   mask_dir='/home/ashfaquekp/val/0/10/mrcnn_mask/'
   file=open("/home/ashfaquekp/val/0/10/mrcnn_mask/class_"+str(class_id)+".txt")
@@ -133,7 +133,7 @@ if __name__ == "__main__":
   # Get mesh from voxel volume and save to disk (can be viewed with Meshlab)
   print("Saving mesh to mesh.ply...")
   verts, faces, norms, colors = tsdf_vol.get_mesh()
-  fusions.meshwrite("mesh-bottle-obj-vol.ply", verts, faces, norms, colors)
+  fusions.meshwrite("mesh-keyboard-obj-vol.ply", verts, faces, norms, colors)
 
   # Get point cloud from voxel volume and save to disk (can be viewed with Meshlab)
   # print("Saving point cloud to pc.ply...")
