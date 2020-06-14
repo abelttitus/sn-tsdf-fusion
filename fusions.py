@@ -415,6 +415,31 @@ def get_vol_bnds(depth_im,cam_pose):
     vol_bnds_world = rigid_transform(vol_bnds.T, cam_pose).T
     return vol_bnds_world
 
+def get_vol_bnds_obj(depth_im,cam_pose):
+    cached_pixel_to_ray_array = normalised_pixel_to_ray_array()
+    points_in_camera = points_in_camera_coords(depth_im,cached_pixel_to_ray_array)
+    vol_bnds=np.ones((3,2))
+    x_coords=np.reshape(points_in_camera[:,:,0],-1)
+    y_coords=np.reshape(points_in_camera[:,:,1],-1)
+    z_coords=np.reshape(points_in_camera[:,:,2],-1)
+    
+    x_width=1.5(np.percentile(x_coords,90)-np.percentile(x_coords,10))
+    x_center=np.percentile(x_coords,50)
+    vol_bnds[0,0]=x_center-(x_width/2.)  
+    vol_bnds[0,1]=x_center+(x_width/2.)
+    
+    y_width=1.5(np.percentile(y_coords,90)-np.percentile(y_coords,10))
+    y_center=np.percentile(y_coords,50)
+    vol_bnds[1,0]=y_center-(y_width/2.)  
+    vol_bnds[1,1]=y_center+(y_width/2.)
+ 
+    z_width=1.5(np.percentile(z_coords,90)-np.percentile(z_coords,10))
+    z_center=np.percentile(z_coords,50)
+    vol_bnds[2,0]=z_center-(z_width/2.)  
+    vol_bnds[2,1]=z_center+(z_width/2.)
+    
+    vol_bnds_world = rigid_transform(vol_bnds.T, cam_pose).T
+    return vol_bnds_world
 #=======================================================================================   
     
 def get_view_frustum(depth_im, cam_intr, cam_pose):
