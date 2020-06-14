@@ -62,7 +62,7 @@ if __name__ == "__main__":
     cam_pose=cam_poses[4*pose_index:4*(pose_index+1),:]
   
 # Compute camera view frustum and extend convex hull
-    vol_bnds_temp=fusion.get_vol_bnds_obj(depth_im,cam_pose)
+    vol_bnds_temp=fusions.get_vol_bnds_obj(depth_im,cam_pose)
     vol_bnds[:,0] = np.minimum(vol_bnds[:,0], vol_bnds_temp[:,0])
     vol_bnds[:,1] = np.maximum(vol_bnds[:,1], vol_bnds_temp[:,1])
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
   # ======================================================================================================== #
   # Initialize voxel volume
   print("Initializing voxel volume...")
-  tsdf_vol = fusion.TSDFVolume(vol_bnds, voxel_size=0.005)
+  tsdf_vol = fusions.TSDFVolume(vol_bnds, voxel_size=0.005)
 
   # Loop through RGB-D images and fuse them together
   t0_elapse = time.time()
@@ -132,9 +132,9 @@ if __name__ == "__main__":
   # Get mesh from voxel volume and save to disk (can be viewed with Meshlab)
   print("Saving mesh to mesh.ply...")
   verts, faces, norms, colors = tsdf_vol.get_mesh()
-  fusion.meshwrite("mesh-bottle-obj-vol.ply", verts, faces, norms, colors)
+  fusions.meshwrite("mesh-bottle-obj-vol.ply", verts, faces, norms, colors)
 
   # Get point cloud from voxel volume and save to disk (can be viewed with Meshlab)
   # print("Saving point cloud to pc.ply...")
   # point_cloud = tsdf_vol.get_point_cloud()
-  # fusion.pcwrite("pc-key.ply", point_cloud)
+  # fusions.pcwrite("pc-key.ply", point_cloud)
