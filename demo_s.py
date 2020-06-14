@@ -10,7 +10,7 @@ import time
 import cv2
 import numpy as np
 
-import fusion
+import fusions
 
 
 if __name__ == "__main__":
